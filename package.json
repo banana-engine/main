@@ -1,0 +1,29 @@
+{
+    "name": "@banana-engine/main",
+    "version": "0.1.0-alpha.rev0",
+    "description": "a game engine.",
+    "keywords": [
+        "game",
+        "engine"
+    ],
+    "license": "ISC",
+    "author": "TensiveYT",
+    "type": "module",
+    "main": "build/index.js",
+    "scripts": {
+        "build": "tsc && node build"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "@types/jquery": "^3.5.33",
+        "electron": "^38.3.0",
+        "terser": "^5.44.0",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "cli-color": "^2.0.4",
+        "jquery": "^3.7.1"
+    }
+}

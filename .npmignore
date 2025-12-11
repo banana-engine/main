@@ -1,0 +1,7 @@
+build/*.ts
+testing/
+build/
+dist/
+/build.js
+/autobuild.ps1
+/package-lock.json
