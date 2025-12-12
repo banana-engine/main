@@ -11,11 +11,13 @@ import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
  * - It is recommended to create these using `EngineInstance.createTexture(...)`, rather than `new BasicTexture(...)`.
  */
 export class BasicTexture {
+    // texture data
     image: ImageWrap
 
     // engine stuff
     parentEngine: EngineInstance
     
+    // constructor & methods
     constructor(parentEngine: EngineInstance, options: BasicTextureOptions) {
         if (!(parentEngine instanceof EngineInstance))
             throw new Error(`BasicTexture constructor recieved invalid parent engine!`)

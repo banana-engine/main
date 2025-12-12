@@ -1,6 +1,6 @@
 // import: local classes
 import { Emitter } from 'engine/classes/Emitter.js'
-import { RepeatingTexture } from 'engine/classes/RepeatingTexture.js'
+import { PatternTexture } from 'engine/classes/PatternTexture.js'
 import { EngineInstance } from 'engine/EngineInstance.js'
 
 // import: local interface
@@ -64,14 +64,14 @@ export class GameObject extends Emitter {
         // add images from the render model
         for (let key in this.models[data.name].model.parts) {
             let part = this.models[data.name].model.parts[key]
-            if (part.image.repeat)
-                this.models[data.name].partTextures[key] = this.parentEngine.createRepeatingTexture({
-                    path: part.image.path,
-                    repeat: part.image.repeat
+            if (part.texture.repeat)
+                this.models[data.name].partTextures[key] = this.parentEngine.createPatternTexture({
+                    path: part.texture.path,
+                    repeat: part.texture.repeat
                 })
             else
                 this.models[data.name].partTextures[key] = this.parentEngine.createBasicTexture({
-                    path: part.image.path
+                    path: part.texture.path
                 })
         }
     }
@@ -231,10 +231,10 @@ export class GameObject extends Emitter {
             let height = img.image.naturalHeight * transform.scale[1]
             if (transform.rotation == 0) { // if rotation is the default value, render it without saving canvas state
                 /* 
-                    check if the current texture is a `RepeatingTexture`, 
+                    check if the current texture is a `PatternTexture`, 
                     if so, use patterns, if not, draw normally
                 */
-                if (tex instanceof RepeatingTexture) {
+                if (tex instanceof PatternTexture) {
                     ctx.fillStyle = this.parentEngine.loadPatternToCache(tex).pattern
                     ctx.fillRect(transform.position[0] - width / 2, transform.position[1] - height / 2, width, height)
                 } else
@@ -245,10 +245,10 @@ export class GameObject extends Emitter {
                 transform.position[0] !== 0.0 && transform.position[1] !== 0.0 ? ctx.translate(transform.position[0], transform.position[1]) : void 0
                 transform.rotation    !== 0.0                                  ? ctx.rotate(transform.rotation)                              : void 0
                 /* 
-                    check if the current texture is a `RepeatingTexture`, 
+                    check if the current texture is a `PatternTexture`, 
                     if so, use patterns, if not, draw normally
                 */
-                if (tex instanceof RepeatingTexture) {
+                if (tex instanceof PatternTexture) {
                     ctx.fillStyle = this.parentEngine.loadPatternToCache(tex).pattern
                     ctx.fillRect(0 - width / 2, 0 - height / 2, width, height)
                 } else

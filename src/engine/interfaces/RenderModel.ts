@@ -1,4 +1,5 @@
-// import: local classes
+// import: local types
+import { PatternRepeatMode } from 'engine/types/PatternRepeatMode.js'
 import { Vector2 } from 'engine/types/Vector2.js'
 
 // declaration
@@ -21,11 +22,11 @@ export interface RenderModel {
          */
         scale   : Vector2 | number
         /**
-         * The image to use for this part.
+         * The texture to use for this part.
          */
-        image   : {
+        texture : {
             path   : string
-            repeat?: 'repeat' | 'repeat-x' | 'repeat-y'
+            repeat?: PatternRepeatMode
         }
     }>
 }

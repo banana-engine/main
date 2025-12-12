@@ -2,15 +2,15 @@
 import { GameObject } from 'engine/classes/GameObject.js'
 import { Emitter } from 'engine/classes/Emitter.js'
 import { BasicTexture } from 'engine/classes/BasicTexture.js'
-import { RepeatingTexture } from 'engine/classes/RepeatingTexture.js'
+import { PatternTexture } from 'engine/classes/PatternTexture.js'
 
 // import: local interfaces
 import { Camera } from 'engine/interfaces/Camera.js'
 import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
 import { EngineOptions } from 'engine/interfaces/EngineOptions.js'
 import { BasicTextureOptions } from 'engine/interfaces/BasicTextureOptions.js'
-import { RepeatingTextureOptions } from 'engine/interfaces/RepeatingTextureOptions.js'
-import { TexPatternWrap } from './interfaces/TexPatternWrap.js'
+import { PatternTextureOptions } from 'engine/interfaces/PatternTextureOptions.js'
+import { PatternWrap } from './interfaces/PatternWrap.js'
 
 /**
  * An instance of the Banana engine.  
@@ -23,7 +23,7 @@ export class EngineInstance extends Emitter {
     gameObjects : GameObject[] = []
     camera      : Camera = { position: [ 0, 0 ], rotation: 0 }
     imageCache  : ImageWrap[] = []
-    patternCache: TexPatternWrap[] = []
+    patternCache: PatternWrap[] = []
     options     : EngineOptions
     constructor(parent: HTMLElement, options?: EngineOptions) {
         // super() - to allow for using methods from `Emitter`, and using `this` in this constructor
@@ -100,15 +100,15 @@ export class EngineInstance extends Emitter {
         // returns the newly created BasicTexture
         return obj
     }
-    createRepeatingTexture(options: RepeatingTextureOptions) {
-        // create BasicTexture
-        let obj = new RepeatingTexture(this, options)
+    createPatternTexture(options: PatternTextureOptions) {
+        // create PatternTexture
+        let obj = new PatternTexture(this, options)
 
         // debug mode: log when the object is created
         if (this.options.debugMode)
-            console.log(`RepeatingTexture created!`)
+            console.log(`PatternTexture created!`)
 
-        // returns the newly created BasicTexture
+        // returns the newly created PatternTexture
         return obj
     }
     /**
@@ -149,10 +149,12 @@ export class EngineInstance extends Emitter {
 
             // debug mode: log when the image is loaded
             if (this.options.debugMode)
-                console.log(`Image loaded to cache! - %c${url}`, `
+                console.log(`Image loaded to cache! - %c${url}%c | %c${this.imageCache.filter(i => i.loaded).length}%c images${this.imageCache.filter(i => i.loaded).length === 1 ? '' : 's'} loaded`, `
                     color: #00ffff;
                     font-style: italic
-                `)
+                `, '', `
+                    color: #00ff00;
+                `, '')
         })
 
         // add the wrapped image to the cache
@@ -162,11 +164,11 @@ export class EngineInstance extends Emitter {
         return imageWrap
     }
     /**
-     * Loads the canvas pattern for a `RepeatingTexture` into the `patternCache`.
+     * Loads the canvas pattern for a `PatternTexture` into the `patternCache`.
      * - If the pattern is already in the cache, it'll return that pattern.
      * @param texture The texture to load the pattern for.
      */
-    loadPatternToCache(texture: RepeatingTexture) {
+    loadPatternToCache(texture: PatternTexture) {
         /*
             if the pattern for this texture has already been loaded,
             don't create a new one; instead, return the existing pattern
@@ -179,10 +181,16 @@ export class EngineInstance extends Emitter {
         let pattern = this.ctx.createPattern(texture.image.image, texture.repeat)
 
         // wrap the pattern in an object
-        let patternWrap: TexPatternWrap = {
+        let patternWrap: PatternWrap = {
             texture,
             pattern
         }
+
+        // debug mode: log when the pattern is loaded into the cache
+        if (this.options.debugMode)
+            console.log(`Pattern loaded to cache! - %c${this.patternCache.length}%c pattern${this.patternCache.length === 1 ? '' : 's'} loaded`, `
+                color: #00ff00;
+            `, '')
 
         // add the wrapped pattern to the cache
         this.patternCache.push(patternWrap)
