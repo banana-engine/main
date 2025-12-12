@@ -27,8 +27,8 @@ export class PatternTexture {
         this.parentEngine = parentEngine
         if (!options)
             throw new Error(`PatternTexture requires one paramater: <options>.`)
-        if (!options.path)
-            throw new Error(`PatternTexture constructor called with an invalid image path! Must be of type \'string\', recieved \'${typeof options.path}\'.`)
+        if (!options.path || typeof options.path !== 'string')
+            throw new Error(`PatternTexture constructor called with an invalid image path! \'options.path\' must be of type \'string\', recieved \'${typeof options.path}\'.`)
         this.image = this.parentEngine.loadImageToCache(options.path)
         if (!['repeat', 'repeat-x', 'repeat-y', 'no-repeat'].includes(options.repeat)) {
             console.warn(`Invalid pattern repeat mode \'%s\'! This PatternTexture will use \'repeat\' by default.`, options.repeat)

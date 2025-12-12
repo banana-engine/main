@@ -22,7 +22,7 @@ export class BasicTexture {
         if (!(parentEngine instanceof EngineInstance))
             throw new Error(`BasicTexture constructor recieved invalid parent engine!`)
         this.parentEngine = parentEngine
-        if (!options.path)
+        if (!options.path || typeof options.path !== 'string')
             throw new Error(`BasicTexture constructor called with an invalid image path! Must be of type \'string\', recieved \'${typeof options.path}\'.`)
         this.image = this.parentEngine.loadImageToCache(options.path)
     }

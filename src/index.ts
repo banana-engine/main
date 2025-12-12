@@ -1,7 +1,7 @@
 // import: local classes
 import { BasicTexture } from 'engine/classes/BasicTexture.js'
 import { Emitter } from 'engine/classes/Emitter.js'
-import { GameObject } from 'engine/classes/GameObject.js'
+import { ModelGameObject } from 'engine/classes/ModelGameObject.js'
 import { PatternTexture } from 'engine/classes/PatternTexture.js'
 import { EngineInstance } from 'engine/EngineInstance.js'
 
@@ -32,7 +32,7 @@ if (typeof jQuery === 'undefined')
 export {
     // classes
     BasicTexture,
-    GameObject,
+    ModelGameObject,
     Emitter,
     PatternTexture,
     EngineInstance,

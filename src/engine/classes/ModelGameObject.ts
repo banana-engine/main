@@ -18,10 +18,10 @@ import { blend } from 'engine/modules/util.js'
 // code
 
 /**
- * An in-game object.
- * - It is recommended to create these using `EngineInstance.addGameObject()`, rather than `new GameObject(...)`.
+ * Similar to `BasicGameObject` except it uses multiple textures, instead of just one texture.
+ * - It is recommended to create these using `EngineInstance.createModelGameObject()`, rather than `new ModelGameObject(...)`.
  */
-export class GameObject extends Emitter {
+export class ModelGameObject extends Emitter {
     // position, rotation, & speed
     position        : Vector2 = [0, 0]
     rotation        : number  = 0

@@ -1,8 +1,9 @@
 // import: local classes
-import { GameObject } from 'engine/classes/GameObject.js'
+import { ModelGameObject } from 'engine/classes/ModelGameObject.js'
 import { Emitter } from 'engine/classes/Emitter.js'
 import { BasicTexture } from 'engine/classes/BasicTexture.js'
 import { PatternTexture } from 'engine/classes/PatternTexture.js'
+import { BasicGameObject } from 'engine/classes/BasicGameObject.js'
 
 // import: local interfaces
 import { Camera } from 'engine/interfaces/Camera.js'
@@ -10,7 +11,11 @@ import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
 import { EngineOptions } from 'engine/interfaces/EngineOptions.js'
 import { BasicTextureOptions } from 'engine/interfaces/BasicTextureOptions.js'
 import { PatternTextureOptions } from 'engine/interfaces/PatternTextureOptions.js'
-import { PatternWrap } from './interfaces/PatternWrap.js'
+import { PatternWrap } from 'engine/interfaces/PatternWrap.js'
+import { BasicGameObjectOptions } from 'engine/interfaces/BasicGameObjectOptions'
+
+// import: local type
+import { GameObject } from 'engine/types/GameObject.js'
 
 /**
  * An instance of the Banana engine.  
@@ -70,19 +75,39 @@ export class EngineInstance extends Emitter {
         loop()
     }
     /**
-     * Creates a `GameObject`, and returns that object.
-     * @returns The newly created `GameObject`.
+     * Creates a `BasicGameObject`, and returns that object.
+     * @returns The newly created `BasicGameObject`.
      */
-    createGameObject(): GameObject {
+    createBasicGameObject(options: BasicGameObjectOptions): BasicGameObject {
         // create GameObject
-        let obj = new GameObject(this)
+        let obj = new BasicGameObject(this, options)
 
         // add it to the list of objects
         this.gameObjects.push(obj)
 
         // debug mode: log when the object is created
         if (this.options.debugMode)
-            console.log(`Game object created! - %c${this.gameObjects.length}%c game object${this.gameObjects.length === 1 ? '' : 's'}`, `
+            console.log(`Basic game object created! - %c${this.gameObjects.length}%c game object${this.gameObjects.length === 1 ? '' : 's'}`, `
+                color: #00ff00;
+            `, '')
+
+        // returns the newly created GameObject
+        return obj
+    }
+    /**
+     * Creates a `ModelGameObject`, and returns that object.
+     * @returns The newly created `ModelGameObject`.
+     */
+    createModelGameObject(): ModelGameObject {
+        // create GameObject
+        let obj = new ModelGameObject(this)
+
+        // add it to the list of objects
+        this.gameObjects.push(obj)
+
+        // debug mode: log when the object is created
+        if (this.options.debugMode)
+            console.log(`Model game object created! - %c${this.gameObjects.length}%c game object${this.gameObjects.length === 1 ? '' : 's'}`, `
                 color: #00ff00;
             `, '')
 
@@ -186,14 +211,14 @@ export class EngineInstance extends Emitter {
             pattern
         }
 
+        // add the wrapped pattern to the cache
+        this.patternCache.push(patternWrap)
+
         // debug mode: log when the pattern is loaded into the cache
         if (this.options.debugMode)
             console.log(`Pattern loaded to cache! - %c${this.patternCache.length}%c pattern${this.patternCache.length === 1 ? '' : 's'} loaded`, `
                 color: #00ff00;
             `, '')
-
-        // add the wrapped pattern to the cache
-        this.patternCache.push(patternWrap)
 
         // return the wrapped pattern
         return patternWrap
