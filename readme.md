@@ -1,5 +1,6 @@
 # Banana
-- Banana is a game engine made by [TensiveYT](https://youtube.com/@Hyperflamee8)!
+*a 2D game engine.*
+- made by [TensiveYT](https://youtube.com/@Hyperflamee8), with pain & suffering
 
 ## Notes
-- This engine is not ready for public use yet - please wait!
+- this engine is not ready for public use yet - please wait!

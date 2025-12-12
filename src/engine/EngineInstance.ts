@@ -1,10 +1,16 @@
 // import: local classes
 import { GameObject } from 'engine/classes/GameObject.js'
-import { Emitter    } from 'engine/classes/Emitter.js'
+import { Emitter } from 'engine/classes/Emitter.js'
+import { BasicTexture } from 'engine/classes/BasicTexture.js'
+import { RepeatingTexture } from 'engine/classes/RepeatingTexture.js'
 
 // import: local interfaces
 import { Camera } from 'engine/interfaces/Camera.js'
 import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
+import { EngineOptions } from 'engine/interfaces/EngineOptions.js'
+import { BasicTextureOptions } from 'engine/interfaces/BasicTextureOptions.js'
+import { RepeatingTextureOptions } from 'engine/interfaces/RepeatingTextureOptions.js'
+import { TexPatternWrap } from './interfaces/TexPatternWrap.js'
 
 /**
  * An instance of the Banana engine.  
@@ -12,14 +18,21 @@ import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
  * @param parent The element to run the Engine on.
  */
 export class EngineInstance extends Emitter {
-    canvas     : HTMLCanvasElement
-    ctx        : CanvasRenderingContext2D
-    gameObjects: GameObject[] = []
-    camera     : Camera = { position: [ 0, 0 ], rotation: 0 }
-    imageCache : ImageWrap[] = []
-    constructor(parent: HTMLElement) {
+    canvas      : HTMLCanvasElement
+    ctx         : CanvasRenderingContext2D
+    gameObjects : GameObject[] = []
+    camera      : Camera = { position: [ 0, 0 ], rotation: 0 }
+    imageCache  : ImageWrap[] = []
+    patternCache: TexPatternWrap[] = []
+    options     : EngineOptions
+    constructor(parent: HTMLElement, options?: EngineOptions) {
         // super() - to allow for using methods from `Emitter`, and using `this` in this constructor
         super()
+
+        // handle engine options
+        this.options = {
+            debugMode: options.debugMode ?? false
+        }
 
         // create canvas & context
         this.canvas = document.createElement('canvas')
@@ -39,6 +52,9 @@ export class EngineInstance extends Emitter {
         // append canvas to parent element
         $(parent).append(this.canvas)
     }
+    /**
+     * Starts the game engine.
+     */
     start(): void {
         let dt = 0
         let last = performance.now()
@@ -51,12 +67,55 @@ export class EngineInstance extends Emitter {
         }
         loop()
     }
-    addGameObject(): GameObject {
+    /**
+     * Creates a `GameObject`, and returns that object.
+     * @returns The newly created `GameObject`.
+     */
+    createGameObject(): GameObject {
+        // create GameObject
         let obj = new GameObject(this)
+
+        // add it to the list of objects
         this.gameObjects.push(obj)
+
+        // debug mode: log when the object is created
+        if (this.options.debugMode)
+            console.log(`Game object created! - %c${this.gameObjects.length}%c game object${this.gameObjects.length === 1 ? '' : 's'}`, `
+                color: #00ff00;
+            `, '')
+
+        // returns the newly created GameObject
         return obj
     }
-    loadImage(uri: string): ImageWrap {
+    createBasicTexture(options: BasicTextureOptions) {
+        // create BasicTexture
+        let obj = new BasicTexture(this, options)
+
+        // debug mode: log when the object is created
+        if (this.options.debugMode)
+            console.log(`BasicTexture created!`)
+
+        // returns the newly created BasicTexture
+        return obj
+    }
+    createRepeatingTexture(options: RepeatingTextureOptions) {
+        // create BasicTexture
+        let obj = new RepeatingTexture(this, options)
+
+        // debug mode: log when the object is created
+        if (this.options.debugMode)
+            console.log(`RepeatingTexture created!`)
+
+        // returns the newly created BasicTexture
+        return obj
+    }
+    /**
+     * Loads an image into the `imageCache`, and returns said image.
+     * - If the image is already in the cache, it'll return that image.
+     * @param uri The URL to the image.
+     * @returns The cached image.
+     */
+    loadImageToCache(uri: string): ImageWrap {
         // format url
         let url = URL.canParse(uri) 
             ? new URL(uri).href
@@ -75,7 +134,7 @@ export class EngineInstance extends Emitter {
             image.src = url
 
         // wrap the image in an object
-        let imageWrap = {
+        let imageWrap: ImageWrap = {
             url,
             image,
             loaded: false
@@ -85,6 +144,13 @@ export class EngineInstance extends Emitter {
         $(image).on('load', () => {
             // set the `loaded` property to `true`
             imageWrap.loaded = true
+
+            // debug mode: log when the image is loaded
+            if (this.options.debugMode)
+                console.log(`Image loaded to cache! - %c${url}`, `
+                    color: #00ffff;
+                    font-style: italic
+                `)
         })
 
         // add the wrapped image to the cache
@@ -92,6 +158,35 @@ export class EngineInstance extends Emitter {
 
         // return the wrapped image
         return imageWrap
+    }
+    /**
+     * Loads the canvas pattern for a `RepeatingTexture` into the `patternCache`.
+     * - If the pattern is already in the cache, it'll return that pattern.
+     * @param texture The texture to load the pattern for.
+     */
+    loadPatternToCache(texture: RepeatingTexture) {
+        /*
+            if the pattern for this texture has already been loaded,
+            don't create a new one; instead, return the existing pattern
+        */
+        let existing = this.patternCache.find(pattern => pattern.texture === texture)
+        if (existing)
+            return existing
+        
+        // create pattern
+        let pattern = this.ctx.createPattern(texture.image.image, texture.repeat)
+
+        // wrap the pattern in an object
+        let patternWrap: TexPatternWrap = {
+            texture,
+            pattern
+        }
+
+        // add the wrapped pattern to the cache
+        this.patternCache.push(patternWrap)
+
+        // return the wrapped pattern
+        return patternWrap
     }
     #update(dt: number): void {
         // clear canvas

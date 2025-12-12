@@ -11,18 +11,21 @@ export interface RenderModel {
         /**
          * The position of this image, relative to the position of the current object.
          */
-        position  : Vector2
+        position: Vector2
         /**
          * The rotation of this image, relative to the rotation of the current object.
          */
-        rotation  : number
+        rotation: number
         /**
          * The scale of this image, relative to the scale of the current object.
          */
-        scale     : Vector2 | number
+        scale   : Vector2 | number
         /**
          * The image to use for this part.
          */
-        imagePath : string
+        image   : {
+            path   : string
+            repeat?: 'repeat' | 'repeat-x' | 'repeat-y'
+        }
     }>
 }

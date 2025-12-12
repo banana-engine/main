@@ -1,22 +1,23 @@
 // import: local classes
 import { Emitter } from 'engine/classes/Emitter.js'
+import { RepeatingTexture } from 'engine/classes/RepeatingTexture.js'
 import { EngineInstance } from 'engine/EngineInstance.js'
 
 // import: local interface
 import { RenderModel } from 'engine/interfaces/RenderModel.js'
 import { AnimationModel } from 'engine/interfaces/AnimationModel.js'
-import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
 import { Transformation } from 'engine/interfaces/Transformation.js'
 
 // import: local types
 import { Vector2 } from 'engine/types/Vector2.js'
+import { Texture } from 'engine/types/Texture.js'
 
 // code
 let lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
 /**
  * An in-game object.
- * - It is recommended not to create these using `new GameObject(...)`, but rather `EngineInstance.addGameObject()`.
+ * - It is recommended to create these using `EngineInstance.addGameObject()`, rather than `new GameObject(...)`.
  */
 export class GameObject extends Emitter {
     // position, rotation, & speed
@@ -31,7 +32,7 @@ export class GameObject extends Emitter {
     currentAnimation: string
     currentModel    : string
     models          : Record<string, {
-        partImages: Record<string, ImageWrap>
+        partTextures: Record<string, Texture>
         model: RenderModel
     }> = {}
     animations      : Record<string, {
@@ -43,7 +44,7 @@ export class GameObject extends Emitter {
     constructor(parentEngine: EngineInstance) {
         super()
         if (!(parentEngine instanceof EngineInstance))
-            throw new Error('Game object recieved invalid parent engine.')
+            throw new Error(`GameObject constructor recieved invalid parentEngine!`)
         this.parentEngine = parentEngine
     }
     loadModel(data: RenderModel) {
@@ -55,13 +56,21 @@ export class GameObject extends Emitter {
 
         // load render model
         this.models[data.name] = {
-            partImages: {},
+            partTextures: {},
             model: data
         }
         // add images from the render model
         for (let key in this.models[data.name].model.parts) {
             let part = this.models[data.name].model.parts[key]
-            this.models[data.name].partImages[key] = this.parentEngine.loadImage(part.imagePath)
+            if (part.image.repeat)
+                this.models[data.name].partTextures[key] = this.parentEngine.createRepeatingTexture({
+                    path: part.image.path,
+                    repeat: part.image.repeat
+                })
+            else
+                this.models[data.name].partTextures[key] = this.parentEngine.createBasicTexture({
+                    path: part.image.path
+                })
         }
     }
     loadAnimation(data: AnimationModel) {
@@ -173,14 +182,15 @@ export class GameObject extends Emitter {
 
         // get model & animation data
         let { model }      = this.models[this.currentModel]
-        let { partImages } = this.models[this.currentModel]
+        let { partTextures } = this.models[this.currentModel]
         let animation  = this.animations[this.currentAnimation]?.model
 
         // calculate & draw
         for (let key in model.parts) {
             // get part data & image data
             let part = model.parts[key]
-            let img  = partImages[key]
+            let tex  = partTextures[key]
+            let img  = tex.image
 
             // edge case check - is `part` or `img` defined?
             if (!part || !img)
@@ -215,17 +225,35 @@ export class GameObject extends Emitter {
                 rotation: (this.rotation + part.rotation + partAnimated.rotation) * (Math.PI / 180)
             }
             // render
+            let width  = img.image.naturalWidth  * transform.scale[0]
+            let height = img.image.naturalHeight * transform.scale[1]
             if (transform.rotation == 0) { // if rotation is the default value, render it without saving canvas state
-                let width  = img.image.naturalWidth  * transform.scale[0]
-                let height = img.image.naturalHeight * transform.scale[1]
-                ctx.drawImage(img.image, transform.position[0] - width / 2, transform.position[1] - height / 2, width, height)
-            } else {
-                // apply position, scale, and rotation the the object, then render it
-                ctx.save()
+                /* 
+                    check if the current texture is a `RepeatingTexture`, 
+                    if so, use patterns, if not, draw normally
+                */
+                if (tex instanceof RepeatingTexture) {
+                    ctx.fillStyle = this.parentEngine.loadPatternToCache(tex).pattern
+                    ctx.fillRect(transform.position[0] - width / 2, transform.position[1] - height / 2, width, height)
+                } else
+                    ctx.drawImage(img.image, transform.position[0] - width / 2, transform.position[1] - height / 2, width, height)
+            } else { 
+                // apply position, & rotation the the object, then render it
+                ctx.save() // save the previous canvas state
                 transform.position[0] !== 0.0 && transform.position[1] !== 0.0 ? ctx.translate(transform.position[0], transform.position[1]) : void 0
-                transform.scale   [0] !== 1.0 && transform.scale   [1] !== 1.0 ? ctx.scale(transform.scale[0], transform.scale[1])           : void 0
                 transform.rotation    !== 0.0                                  ? ctx.rotate(transform.rotation)                              : void 0
-                ctx.drawImage(img.image, 0 - img.image.naturalWidth / 2, 0 - img.image.naturalHeight / 2, img.image.naturalWidth, img.image.naturalHeight)
+                /* 
+                    check if the current texture is a `RepeatingTexture`, 
+                    if so, use patterns, if not, draw normally
+                */
+                if (tex instanceof RepeatingTexture) {
+                    ctx.fillStyle = this.parentEngine.loadPatternToCache(tex).pattern
+                    ctx.fillRect(0 - width / 2, 0 - height / 2, width, height)
+                } else
+                    // draw the image
+                    ctx.drawImage(img.image, 0 - width / 2, 0 - height / 2, width, height)
+                
+                // restore the canvas state back to what it was before
                 ctx.restore()
             }
         }
