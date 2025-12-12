@@ -1,6 +1,6 @@
 // declaration
 /**
- * Wrapper for the Image constructor.
+ * Wrapper for the `Image` constructor.
  * - This is used to cache loaded images.
  */
 export interface ImageWrap {

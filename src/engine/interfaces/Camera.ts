@@ -1,5 +1,5 @@
 // import: local interfaces
-import { Vector2 } from '../types/Vector2.js'
+import { Vector2 } from 'engine/types/Vector2.js'
 
 // declaration
 /**

@@ -1,10 +1,10 @@
 // import: local classes
-import { GameObject } from './classes/GameObject.js'
-import { Emitter    } from './classes/Emitter.js'
+import { GameObject } from 'engine/classes/GameObject.js'
+import { Emitter    } from 'engine/classes/Emitter.js'
 
 // import: local interfaces
-import { Camera } from './interfaces/Camera.js'
-import { ImageWrap } from './interfaces/ImageWrap.js'
+import { Camera } from 'engine/interfaces/Camera.js'
+import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
 
 /**
  * An instance of the Banana engine.  

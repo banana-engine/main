@@ -1,15 +1,15 @@
 // import: local classes
-import { Emitter } from './Emitter.js'
-import { EngineInstance } from '../EngineInstance.js'
+import { Emitter } from 'engine/classes/Emitter.js'
+import { EngineInstance } from 'engine/EngineInstance.js'
 
 // import: local interface
-import { RenderModel } from '../interfaces/RenderModel.js'
-import { AnimationModel } from '../interfaces/AnimationModel.js'
-import { ImageWrap } from '../interfaces/ImageWrap.js'
-import { Transformation } from '../interfaces/Transformation.js'
+import { RenderModel } from 'engine/interfaces/RenderModel.js'
+import { AnimationModel } from 'engine/interfaces/AnimationModel.js'
+import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
+import { Transformation } from 'engine/interfaces/Transformation.js'
 
 // import: local types
-import { Vector2 } from '../types/Vector2.js'
+import { Vector2 } from 'engine/types/Vector2.js'
 
 // code
 let lerp = (a: number, b: number, t: number) => a + (b - a) * t

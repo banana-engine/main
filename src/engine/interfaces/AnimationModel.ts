@@ -1,5 +1,5 @@
 // import: local interfaces
-import { Transformation } from './Transformation.js'
+import { Transformation } from 'engine/interfaces/Transformation.js'
 
 // declaration
 /**
