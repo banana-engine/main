@@ -1,8 +1,6 @@
-build/*.ts
+*.ts
 testing/
-build/
 dist/
-/build.js
 /autobuild.ps1
 /package-lock.json
-/webpack.config.js
+/rollup.config.js

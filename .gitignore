@@ -137,9 +137,6 @@ dist
 
 # my stuff
 testing/
-build/
 dist/
-/build.js
 /autobuild.ps1
 /package-lock.json
-/webpack.config.js
