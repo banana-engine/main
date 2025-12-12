@@ -12,8 +12,10 @@ import { Transformation } from 'engine/interfaces/Transformation.js'
 import { Vector2 } from 'engine/types/Vector2.js'
 import { Texture } from 'engine/types/Texture.js'
 
+// import: local constants
+import { blend } from 'engine/modules/util.js'
+
 // code
-let lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
 /**
  * An in-game object.
@@ -149,13 +151,13 @@ export class GameObject extends Emitter {
             // get the position, scale, and rotation w/ interpolation
             let final: Transformation = {
                 position: [
-                    lerp(currentPart.position[0], nextPart.position[0], interp),
-                    lerp(currentPart.position[1], nextPart.position[1], interp)
+                    blend.linear(currentPart.position[0], nextPart.position[0], interp),
+                    blend.linear(currentPart.position[1], nextPart.position[1], interp)
                 ],
-                rotation: lerp(currentPart.rotation, nextPart.rotation, interp),
+                rotation: blend.linear(currentPart.rotation, nextPart.rotation, interp),
                 scale: [
-                    lerp(currentPart.scale[0], nextPart.scale[0], interp),
-                    lerp(currentPart.scale[1], nextPart.scale[1], interp)
+                    blend.linear(currentPart.scale[0], nextPart.scale[0], interp),
+                    blend.linear(currentPart.scale[1], nextPart.scale[1], interp)
                 ]
             }
 

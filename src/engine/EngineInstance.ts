@@ -36,7 +36,9 @@ export class EngineInstance extends Emitter {
 
         // create canvas & context
         this.canvas = document.createElement('canvas')
-        this.ctx    = this.canvas.getContext('2d')
+        this.ctx    = this.canvas.getContext('2d', {
+            colorType: 'float16'
+        }) as CanvasRenderingContext2D
 
         // resize the canvas
         this.canvas.width  = innerWidth
