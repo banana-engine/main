@@ -14,6 +14,7 @@ import { EngineOptions } from 'engine/interfaces/EngineOptions.js'
 import { ImageWrap } from 'engine/interfaces/ImageWrap.js'
 import { RenderModel } from 'engine/interfaces/RenderModel.js'
 import { RepeatingTextureOptions } from 'engine/interfaces/RepeatingTextureOptions.js'
+import { TexPatternWrap } from 'engine/interfaces/TexPatternWrap.js'
 import { Transformation } from 'engine/interfaces/Transformation.js'
 
 // import: local types
@@ -41,6 +42,7 @@ export {
     ImageWrap,
     RenderModel,
     RepeatingTextureOptions,
+    TexPatternWrap,
     Transformation,
 
     // types
